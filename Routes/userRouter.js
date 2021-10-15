@@ -46,6 +46,9 @@ router.post("/", async (req, res) => {
         //Send the token in a HTTP-only cookie
         res.cookie("token", token, {
             httpOnly: true,
+            //uncomment below 2 lines for https hosting
+            //secure: true,
+            //sameSite:"none"
         }).send();
 
     } catch (err) {
@@ -83,6 +86,9 @@ router.post("/login", async (req, res) => {
         //Send the token in a HTTP-only cookie
         res.cookie("token", token, {
             httpOnly: true,
+            //uncomment below 2 lines for https hosting
+            //secure: true,
+            //sameSite:"none"
         }).send();
 
     } catch (err) {
@@ -95,8 +101,24 @@ router.post("/login", async (req, res) => {
 router.get("/logout", (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
+        //uncomment below 2 lines for https hosting
+            //secure: true,
+            //sameSite:"none"
         expires: new Date(0)
     }).send();
+});
+
+router.get("/loggedIn", (req, res) => {
+    try {
+        //console.log(req.cookies);
+        const token = req.cookies.token;
+        if (!token) return res.json(false);
+
+        jwt.verify(token, process.env.JWT_SECRET);
+        res.send(true);
+    } catch (err) {
+        res.json(false);
+    }
 });
 
 module.exports = router;
